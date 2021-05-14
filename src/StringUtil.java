@@ -71,6 +71,9 @@ public class StringUtil {
                 treeLayer.add(applySha256(previousTreeLayer.get(i-1) + previousTreeLayer.get(i)));
             }
             count = treeLayer.size();
+            if ((count & 1) == 1) {
+                treeLayer.add(treeLayer.get(count - 1));
+            }
             previousTreeLayer = treeLayer;
         }
         String merkleRoot = (treeLayer.size() == 1) ? treeLayer.get(0) : "";
