@@ -14,7 +14,7 @@ public class TransactionOutput {
         this.id = StringUtil.applySha256(StringUtil.getStringFromKey(reciepient)+Float.toString(value)+parentTransactionId);
     }
 
-    //Check if coin belongs to you
+    //트랜잭션의 잔고가 누구의 것인지 참/거짓을 판단
     public boolean isMine(PublicKey publicKey) {
         return (publicKey == reciepient);
     }
