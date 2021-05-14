@@ -64,7 +64,7 @@ public class StringUtil {
         ArrayList<String> treeLayer = previousTreeLayer;
         while(count > 1) {
             treeLayer = new ArrayList<String>();
-            for(int i=1; i < previousTreeLayer.size(); i++) {
+            for(int i=1; i < previousTreeLayer.size(); i += 2) {
                 treeLayer.add(applySha256(previousTreeLayer.get(i-1) + previousTreeLayer.get(i)));
             }
             count = treeLayer.size();
