@@ -9,6 +9,7 @@ public class Wallet {
         generateKeyPair();
     }
 
+    // Elliptic Curve KeyPair 방식을 사용하여 두 키를 생성
     private void generateKeyPair() {
         try{
             KeyPairGenerator keyGen = KeyPairGenerator.getInstance("ECDSA", "BC");

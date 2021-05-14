@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="org.bouncycastle:bcmail-jdk15on:1.66" level="project" />
+    <orderEntry type="library" name="org.bouncycastle:bcmail-jdk15on:1.68" level="project" />
   </component>
 </module>
