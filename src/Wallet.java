@@ -7,7 +7,7 @@ import java.util.Map;
 public class Wallet {
     public PrivateKey privateKey; //트랜잭션에 사인을 하는 기능
     public PublicKey publicKey; // 입금을 받는 주소
-    public HashMap<String,TransactionOutput> UTXOs = new HashMap<String,TransactionOutput>(); //이 지갑에 저장되는 잔고
+    public HashMap<String,TransactionOutput> UTXOs = new HashMap<String,TransactionOutput>(); //이 지갑에 저장되는 잔고 = 블록체인상에 자신의 소유로 저장되어 있는 UTXO 출력값들
 
     public Wallet(){
         generateKeyPair();
@@ -29,7 +29,7 @@ public class Wallet {
         }
     }
 
-    //지갑이 갖고 있는 잔고를 리턴
+    //지갑이 갖고 있는 잔고를 리턴하면서, 지갑의 UTXO 구조체를 갱신함
     public float getBalance() {
         float total = 0;
         for (Map.Entry<String, TransactionOutput> item: DemoChain.UTXOs.entrySet()){
@@ -43,8 +43,8 @@ public class Wallet {
     }
 
     //지갑으로부터 새 트랜잭션을 생성해냄
-    public Transaction sendFunds(PublicKey _recipient,float value ) {
-        if(getBalance() < value) { //gather balance and check funds.
+    public Transaction sendFunds(PublicKey _recipient, float value) {
+        if(getBalance() < value) { //보낼 수 있는 양인지를 검증
             System.out.println("#잔고가 부족합니다. 트랜잭션 무시됨");
             return null;
         }
@@ -56,14 +56,14 @@ public class Wallet {
             TransactionOutput UTXO = item.getValue();
             total += UTXO.value;
             inputs.add(new TransactionInput(UTXO.id));
-            if(total > value) break;
+            if(total > value) break; //UTXO 구조를 전부다 확인할 필요 없이 value보다 큰 것이 확인만 되면 바로 종료
         }
 
-        Transaction newTransaction = new Transaction(publicKey, _recipient , value, inputs);
+        Transaction newTransaction = new Transaction(publicKey, _recipient, value, inputs);
         newTransaction.generateSignature(privateKey);
 
         for(TransactionInput input: inputs){
-            UTXOs.remove(input.transactionOutputId);
+            UTXOs.remove(input.transactionOutputId); //새 Output을 생성했으므로 존재하던 Input 삭제
         }
         return newTransaction;
     }

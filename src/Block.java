@@ -39,9 +39,9 @@ public class Block {
 
     //블럭에 트랜잭션 기록
     public boolean addTransaction(Transaction transaction) {
-        //트랜잭션이 유효한지 확인, 제네시스 블록은 제외.
+        //트랜잭션이 유효한지 확인
         if(transaction == null) return false;
-        if((previousHash != "0")) {
+        if((previousHash != "0")) { // 제네시스 블록은 검사 제외
             if((transaction.processTransaction() != true)) {
                 System.out.println("트랜잭션 처리에 실패했습니다. 메소드 중지됨.");
                 return false;

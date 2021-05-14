@@ -41,46 +41,45 @@ public class Transaction {
         return StringUtil.verifyECDSASig(sender, data, signature);
     }
 
-    //Returns true if new transaction could be created.
+    //트랜잭션이 생성 조건을 만족하면 True를 리턴
     public boolean processTransaction() {
 
         if(verifiySignature() == false) {
-            System.out.println("#Transaction Signature failed to verify");
+            System.out.println("#검증되지 않은 트랜잭션 서명입니다.");
             return false;
         }
 
-        //gather transaction inputs (Make sure they are unspent):
+        //트랜잭션 입력을 모음 (Unspent 잔고들이어야 함):
         for(TransactionInput i : inputs) {
             i.UTXO = DemoChain.UTXOs.get(i.transactionOutputId);
         }
 
-        //check if transaction is valid:
+        //트랜잭션이 유효한지 확인 (한 트랜잭션의 최소량)
         if(getInputsValue() < DemoChain.minimumTransaction) {
-            System.out.println("#트랜잭션의 Input 값이 너무 작습니다 : " + getInputsValue());
+            System.out.println("#트랜잭션의 Input 값이 조건에 미치지 못합니다 : " + getInputsValue());
             return false;
         }
 
-        //generate transaction outputs:
-        float leftOver = getInputsValue() - value; //get value of inputs then the left over change:
+        //트랜잭션 Output 생성
+        float leftOver = getInputsValue() - value; //남는 잔고 계산:
         transactionId = calculateHash();
-        outputs.add(new TransactionOutput( this.reciepient, value,transactionId)); //send value to recipient
-        outputs.add(new TransactionOutput( this.sender, leftOver,transactionId)); //send the left over 'change' back to sender
+        outputs.add(new TransactionOutput( this.reciepient, value, transactionId)); //수신자와 보낼 값을 명시하여 트랜잭션 Output 생성
+        outputs.add(new TransactionOutput( this.sender, leftOver, transactionId)); //송신자가 갖는 잔고에서 보내는 값을 차감하여 트랜잭션 Output 생성
 
-        //add outputs to Unspent list
+        //생성한 트랜잭션 Output을 블록체인 UTXO 장부에 저장
         for(TransactionOutput o : outputs) {
             DemoChain.UTXOs.put(o.id , o);
         }
 
-        //remove transaction inputs from UTXO lists as spent:
+        //Input으로 부터 Output이 생성되었으니 UTXO에서 기존의 Input을 삭제함
         for(TransactionInput i : inputs) {
             if(i.UTXO == null) continue; //if Transaction can't be found skip it
             DemoChain.UTXOs.remove(i.UTXO.id);
         }
-
         return true;
     }
 
-    //returns sum of inputs(UTXOs) values
+    //트랜잭션의 Input UTXO 값들의 총합을 계산 (트랜잭션 최소 요구량을 확인하기 위함)
     public float getInputsValue() {
         float total = 0;
         for(TransactionInput i : inputs) {
@@ -90,7 +89,7 @@ public class Transaction {
         return total;
     }
 
-    //returns sum of outputs:
+    //트랜잭션의 Output UTXO 값들의 총합을 계산 (거래 과정에서 변조가 있었는지 Input값과 비교하면서 확인하기 위함)
     public float getOutputsValue() {
         float total = 0;
         for(TransactionOutput o : outputs) {
