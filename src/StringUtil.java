@@ -61,13 +61,19 @@ public class StringUtil {
         for(Transaction transaction : transactions) {
             previousTreeLayer.add(transaction.transactionId);
         }
+        if ((count & 1) == 1) {
+            previousTreeLayer.add(previousTreeLayer.get(count - 1));
+        }
         ArrayList<String> treeLayer = previousTreeLayer;
         while(count > 1) {
             treeLayer = new ArrayList<String>();
-            for(int i=1; i < previousTreeLayer.size(); i++) {
+            for(int i=1; i < previousTreeLayer.size(); i += 2) {
                 treeLayer.add(applySha256(previousTreeLayer.get(i-1) + previousTreeLayer.get(i)));
             }
             count = treeLayer.size();
+            if ((count & 1) == 1) {
+                treeLayer.add(treeLayer.get(count - 1));
+            }
             previousTreeLayer = treeLayer;
         }
         String merkleRoot = (treeLayer.size() == 1) ? treeLayer.get(0) : "";
