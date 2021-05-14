@@ -61,6 +61,9 @@ public class StringUtil {
         for(Transaction transaction : transactions) {
             previousTreeLayer.add(transaction.transactionId);
         }
+        if ((count & 1) == 1) {
+            previousTreeLayer.add(previousTreeLayer.get(count - 1));
+        }
         ArrayList<String> treeLayer = previousTreeLayer;
         while(count > 1) {
             treeLayer = new ArrayList<String>();
