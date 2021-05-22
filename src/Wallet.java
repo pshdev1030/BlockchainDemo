@@ -33,7 +33,7 @@ public class Wallet {
   //지갑이 갖고 있는 잔고를 리턴하면서, 지갑의 UTXO 구조체를 갱신함
   public float getBalance() {
     float total = 0;
-    for (Map.Entry<String, TransactionOutput> item : DemoChain.UTXOs.entrySet()) {
+    for (Map.Entry<String, TransactionOutput> item : BlockChain.UTXOs.entrySet()) {
       TransactionOutput UTXO = item.getValue();
       if (UTXO.isMine(publicKey)) { //if output belongs to me ( if coins belong to me )
         UTXOs.put(UTXO.id, UTXO); //add it to our list of unspent transactions.

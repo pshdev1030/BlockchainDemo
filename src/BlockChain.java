@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import com.google.gson.GsonBuilder;
 
-public class DemoChain {
+public class BlockChain {
 
   public static ArrayList<Block> demoChain = new ArrayList<Block>();
 

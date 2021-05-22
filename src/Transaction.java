@@ -55,11 +55,11 @@ public class Transaction {
 
     //트랜잭션 입력을 모음 (Unspent 잔고들이어야 함):
     for (TransactionInput i : inputs) {
-      i.UTXO = DemoChain.UTXOs.get(i.transactionOutputId);
+      i.UTXO = BlockChain.UTXOs.get(i.transactionOutputId);
     }
 
     //트랜잭션이 유효한지 확인 (한 트랜잭션의 최소량)
-    if (getInputsValue() < DemoChain.minimumTransaction) {
+    if (getInputsValue() < BlockChain.minimumTransaction) {
       System.out.println("#트랜잭션의 Input 값이 조건에 미치지 못합니다 : " + getInputsValue());
       return false;
     }
@@ -74,7 +74,7 @@ public class Transaction {
 
     //생성한 트랜잭션 Output을 블록체인 UTXO 장부에 저장
     for (TransactionOutput o : outputs) {
-      DemoChain.UTXOs.put(o.id, o);
+      BlockChain.UTXOs.put(o.id, o);
     }
 
     //Input으로 부터 Output이 생성되었으니 UTXO에서 기존의 Input을 삭제함
@@ -82,7 +82,7 @@ public class Transaction {
       if (i.UTXO == null) {
         continue; //if Transaction can't be found skip it
       }
-      DemoChain.UTXOs.remove(i.UTXO.id);
+      BlockChain.UTXOs.remove(i.UTXO.id);
     }
     return true;
   }
