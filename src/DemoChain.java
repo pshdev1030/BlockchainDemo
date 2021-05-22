@@ -97,7 +97,7 @@ public class DemoChain {
       for (int t = 0; t < currentBlock.transactions.size(); t++) {
         Transaction currentTransaction = currentBlock.transactions.get(t);
 
-        if (!currentTransaction.verifiySignature()) {
+        if (!currentTransaction.verifySignature()) {
           System.out.println("#트랜잭션(" + t + ")의 서명이 유효하지 않습니다.");
           return false;
         }

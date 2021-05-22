@@ -41,7 +41,7 @@ public class Transaction {
   }
 
   //데이터 검증
-  public boolean verifiySignature() {
+  public boolean verifySignature() {
     String data =
         CryptoUtil.getStringFromKey(sender) + CryptoUtil.getStringFromKey(reciepient) + Float
             .toString(value);
@@ -50,7 +50,7 @@ public class Transaction {
 
   //트랜잭션이 생성 조건을 만족하면 True를 리턴
   public boolean processTransaction() {
-    if (!verifiySignature()) {
+    if (!verifySignature()) {
       System.out.println("#검증되지 않은 트랜잭션 서명입니다.");
       return false;
     }
