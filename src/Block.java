@@ -17,7 +17,7 @@ public class Block {
     }
 
     public String calculateHash(){
-        String calculatedHash = StringUtil.applySha256(
+        String calculatedHash = CryptoUtil.applySha256(
                 previousHash +
                         Long.toString(timeStamp) +
                         Integer.toString(nonce) +
@@ -27,13 +27,14 @@ public class Block {
     }
 
     public void mining(int difficulty){
-        merkleRoot = StringUtil.getMerkleRoot(transactions);
+        merkleRoot = MerkleTree.getRoot(transactions);
         String target = StringUtil.getDifficultyString(difficulty);
         //임시 nonce값을 삽입하며 hash 값을 계속해서 계산하다가, 앞자리수가 난이도보다 낮은 hash값이 검출되면 종료한다.
         while(!hash.substring(0, difficulty).equals(target)){
             nonce++;
             hash = calculateHash();
         }
+        System.out.println("Nonce= " + nonce);
         System.out.println("Block Mined! hash=" + hash);
     }
 
