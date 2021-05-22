@@ -6,19 +6,19 @@ public class Transaction {
 
   public String transactionId;
   public PublicKey sender;
-  public PublicKey reciepient;
+  public PublicKey recipient;
   public float value;
   public byte[] signature;
 
-  public ArrayList<TransactionInput> inputs = new ArrayList<TransactionInput>(); //보내는 사람이 계좌를 가지고 있는 지를 증명함
-  public ArrayList<TransactionOutput> outputs = new ArrayList<TransactionOutput>(); // 대상의 주소가 받은 금액을 보여줌 (추후 input으로 쓰임) = 지갑의 잔고가 곧 추후의 outputs가 됨
+  public ArrayList<TransactionInput> inputs; //보내는 사람이 계좌를 가지고 있는 지를 증명함
+  public ArrayList<TransactionOutput> outputs = new ArrayList<>(); // 대상의 주소가 받은 금액을 보여줌 (추후 input으로 쓰임) = 지갑의 잔고가 곧 추후의 outputs가 됨
 
   private static int sequence = 0;
 
   public Transaction(PublicKey from, PublicKey to, float value,
       ArrayList<TransactionInput> inputs) {
     this.sender = from;
-    this.reciepient = to;
+    this.recipient = to;
     this.value = value;
     this.inputs = inputs;
   }
@@ -27,24 +27,22 @@ public class Transaction {
     sequence++;
     return CryptoUtil.applySha256(
         CryptoUtil.getStringFromKey(sender) +
-            CryptoUtil.getStringFromKey(reciepient) +
-            Float.toString(value) + sequence
+            CryptoUtil.getStringFromKey(recipient) +
+            value + sequence
     );
   }
 
   //서명 생성하기
   public void generateSignature(PrivateKey privateKey) {
     String data =
-        CryptoUtil.getStringFromKey(sender) + CryptoUtil.getStringFromKey(reciepient) + Float
-            .toString(value);
+        CryptoUtil.getStringFromKey(sender) + CryptoUtil.getStringFromKey(recipient) + value;
     signature = CryptoUtil.applyECDSASig(privateKey, data);
   }
 
   //데이터 검증
   public boolean verifySignature() {
     String data =
-        CryptoUtil.getStringFromKey(sender) + CryptoUtil.getStringFromKey(reciepient) + Float
-            .toString(value);
+        CryptoUtil.getStringFromKey(sender) + CryptoUtil.getStringFromKey(recipient) + value;
     return CryptoUtil.verifyECDSASig(sender, data, signature);
   }
 
@@ -69,7 +67,7 @@ public class Transaction {
     //트랜잭션 Output 생성
     float leftOver = getInputsValue() - value; //남는 잔고 계산:
     transactionId = calculateHash();
-    outputs.add(new TransactionOutput(this.reciepient, value,
+    outputs.add(new TransactionOutput(this.recipient, value,
         transactionId)); //수신자와 보낼 값을 명시하여 트랜잭션 Output 생성
     outputs.add(new TransactionOutput(this.sender, leftOver,
         transactionId)); //송신자가 갖는 잔고에서 보내는 값을 차감하여 트랜잭션 Output 생성

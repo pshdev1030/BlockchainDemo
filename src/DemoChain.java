@@ -28,7 +28,7 @@ public class DemoChain {
     genesisTransaction.generateSignature(coinbase.privateKey);   // 최초 트랜잭션은 수동으로 서명
     genesisTransaction.transactionId = "0"; // 최초 트랜잭션은 수동으로 ID를 설정
     genesisTransaction.outputs.add(
-        new TransactionOutput(genesisTransaction.reciepient, genesisTransaction.value,
+        new TransactionOutput(genesisTransaction.recipient, genesisTransaction.value,
             genesisTransaction.transactionId)); // 수동으로 OUTPUT에 추가
     UTXOs.put(genesisTransaction.outputs.get(0).id,
         genesisTransaction.outputs.get(0)); //블록체인의 장부에 저장
@@ -127,7 +127,7 @@ public class DemoChain {
         }
 
         // 연결된 블록의 정보끼리 비교
-        if (currentTransaction.outputs.get(0).recipient != currentTransaction.reciepient) {
+        if (currentTransaction.outputs.get(0).recipient != currentTransaction.recipient) {
           System.out.println("#트랜잭션(" + t + ") Output의 수신자가 변조되었습니다.");
           return false;
         }
