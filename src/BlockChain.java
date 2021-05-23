@@ -1,7 +1,8 @@
+import java.security.PublicKey;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
-import com.google.gson.GsonBuilder;
+import java.util.Set;
 
 public class BlockChain {
 
@@ -19,50 +20,70 @@ public class BlockChain {
   public static void main(String[] args) {
     Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 
-    walletA = new Wallet();
-    walletB = new Wallet();
-    Wallet coinbase = new Wallet();
+    CLI cli = new CLI(args);
+    CLI.Command cmd = cli.parse();
 
-    //최초 트랜잭션 생성, 지갑A에 100코인 지급 코드
-    genesisTransaction = new Transaction(coinbase.publicKey, walletA.publicKey, 100f, null);
-    genesisTransaction.generateSignature(coinbase.privateKey);   // 최초 트랜잭션은 수동으로 서명
-    genesisTransaction.transactionId = "0"; // 최초 트랜잭션은 수동으로 ID를 설정
-    genesisTransaction.outputs.add(
-        new TransactionOutput(genesisTransaction.recipient, genesisTransaction.value,
-            genesisTransaction.transactionId)); // 수동으로 OUTPUT에 추가
-    UTXOs.put(genesisTransaction.outputs.get(0).id,
-        genesisTransaction.outputs.get(0)); //블록체인의 장부에 저장
+    switch (cmd) {
+      case CREATE_BLOCKCHAIN:
+        break;
+      case GET_BALANCE:
+        break;
+      case SEND:
+        break;
+      case CREATE_WALLET:
+        break;
+      case PRINT_PUBLIC_KEYS:
+        break;
+      case PRINT_BLOCKCHAIN:
+        break;
+      default:
+        break;
+    }
 
-    System.out.println("제네시스 블록 생성 중... ");
-    Block genesis = new Block("0");
-    genesis.addTransaction(genesisTransaction);
-    addBlock(genesis);
-
-    //testing
-    Block block1 = new Block(genesis.hash);
-    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
-    System.out.println("\n지갑A에서 지갑B로 40 전송..");
-    block1.addTransaction(walletA.sendFunds(walletB.publicKey, 40f));
-    addBlock(block1);
-    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
-    System.out.println("지갑B 잔고: " + walletB.getBalance());
-
-    Block block2 = new Block(block1.hash);
-    System.out.println("\n지갑A에서 1000 전송 시도 (잔고 부족)...");
-    block2.addTransaction(walletA.sendFunds(walletB.publicKey, 1000f));
-    addBlock(block2);
-    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
-    System.out.println("지갑B 잔고: " + walletB.getBalance());
-
-    Block block3 = new Block(block2.hash);
-    System.out.println("\n지갑B에서 지갑A로 20 전송...");
-    block3.addTransaction(walletB.sendFunds(walletA.publicKey, 20));
-    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
-    System.out.println("지갑B 잔고: " + walletB.getBalance());
-
-    isChainValid();
-    String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(demoChain);
-    System.out.println(blockchainJson);
+//    walletA = new Wallet();
+//    walletB = new Wallet();
+//    Wallet coinbase = new Wallet();
+//
+//    //최초 트랜잭션 생성, 지갑A에 100코인 지급 코드
+//    genesisTransaction = new Transaction(coinbase.publicKey, walletA.publicKey, 100f, null);
+//    genesisTransaction.generateSignature(coinbase.privateKey);   // 최초 트랜잭션은 수동으로 서명
+//    genesisTransaction.transactionId = "0"; // 최초 트랜잭션은 수동으로 ID를 설정
+//    genesisTransaction.outputs.add(
+//        new TransactionOutput(genesisTransaction.recipient, genesisTransaction.value,
+//            genesisTransaction.transactionId)); // 수동으로 OUTPUT에 추가
+//    UTXOs.put(genesisTransaction.outputs.get(0).id,
+//        genesisTransaction.outputs.get(0)); //블록체인의 장부에 저장
+//
+//    System.out.println("제네시스 블록 생성 중... ");
+//    Block genesis = new Block("0");
+//    genesis.addTransaction(genesisTransaction);
+//    addBlock(genesis);
+//
+//    //testing
+//    Block block1 = new Block(genesis.hash);
+//    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
+//    System.out.println("\n지갑A에서 지갑B로 40 전송..");
+//    block1.addTransaction(walletA.sendFunds(walletB.publicKey, 40f));
+//    addBlock(block1);
+//    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
+//    System.out.println("지갑B 잔고: " + walletB.getBalance());
+//
+//    Block block2 = new Block(block1.hash);
+//    System.out.println("\n지갑A에서 1000 전송 시도 (잔고 부족)...");
+//    block2.addTransaction(walletA.sendFunds(walletB.publicKey, 1000f));
+//    addBlock(block2);
+//    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
+//    System.out.println("지갑B 잔고: " + walletB.getBalance());
+//
+//    Block block3 = new Block(block2.hash);
+//    System.out.println("\n지갑B에서 지갑A로 20 전송...");
+//    block3.addTransaction(walletB.sendFunds(walletA.publicKey, 20));
+//    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
+//    System.out.println("지갑B 잔고: " + walletB.getBalance());
+//
+//    isChainValid();
+//    String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(demoChain);
+//    System.out.println(blockchainJson);
   }
 
   //블록체인 무결성 검증

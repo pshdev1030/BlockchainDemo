@@ -1,10 +1,15 @@
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Wallet {
+public class Wallet implements Serializable {
+
+  private static final long serialVersionUID = 166249065006236265L;
 
   public PrivateKey privateKey; //트랜잭션에 사인을 하는 기능
   public PublicKey publicKey; // 입금을 받는 주소
@@ -70,4 +75,9 @@ public class Wallet {
     }
     return newTransaction;
   }
+
+  public String getAddress() {
+    return CryptoUtil.getStringFromKey(publicKey);
+  }
+
 }
