@@ -1,51 +1,30 @@
-import java.security.PublicKey;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 
 public class BlockChain {
 
-  public static ArrayList<Block> demoChain = new ArrayList<Block>();
+  public ArrayList<Block> demoChain = new ArrayList<Block>();
 
   //UTXO = Unspent Transaction Output, 소비되지 않은 트랜잭션 출력값
   //소유자만이 암호를 해제하여 트랜잭션의 입력값으로 사용할 수 있음 (사실상 지갑은 실제로 돈을 저장하고 있는 것이 아님)
   public static HashMap<String, TransactionOutput> UTXOs = new HashMap<String, TransactionOutput>();
-  public static int difficulty = 5;
-  public static Wallet walletA;
-  public static Wallet walletB;
+  public int difficulty = 5;
   public static float minimumTransaction = 0.1f;
-  public static Transaction genesisTransaction;
+  public Transaction genesisTransaction;
 
-  public static void main(String[] args) {
-    Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-
-    CLI cli = new CLI(args);
-    CLI.Command cmd = cli.parse();
-
-    switch (cmd) {
-      case CREATE_BLOCKCHAIN:
-        break;
-      case GET_BALANCE:
-        break;
-      case SEND:
-        break;
-      case CREATE_WALLET:
-        break;
-      case PRINT_PUBLIC_KEYS:
-        break;
-      case PRINT_BLOCKCHAIN:
-        break;
-      default:
-        break;
-    }
-
-//    walletA = new Wallet();
-//    walletB = new Wallet();
+//  public static void main(String[] args) {
+//    Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+//
+//    String walletPubKey1 = "6b:15:1e:e5:61:62:df:35:80:be:85:ea:ab:78:0b:78:db:77:d6:03";
+//    String walletPubKey2 = "93:e8:b0:5c:20:e7:5c:42:d6:f8:3f:59:8d:99:5a:e6:81:47:23:46";
+//
 //    Wallet coinbase = new Wallet();
 //
 //    //최초 트랜잭션 생성, 지갑A에 100코인 지급 코드
-//    genesisTransaction = new Transaction(coinbase.publicKey, walletA.publicKey, 100f, null);
+//    Wallet a = WalletUtils.getInstance().getWallet(walletPubKey1);
+
+//    genesisTransaction = new Transaction(coinbase.publicKey, a.publicKey, 100f, null);
 //    genesisTransaction.generateSignature(coinbase.privateKey);   // 최초 트랜잭션은 수동으로 서명
 //    genesisTransaction.transactionId = "0"; // 최초 트랜잭션은 수동으로 ID를 설정
 //    genesisTransaction.outputs.add(
@@ -59,14 +38,44 @@ public class BlockChain {
 //    genesis.addTransaction(genesisTransaction);
 //    addBlock(genesis);
 //
-//    //testing
+//    CLI cli = new CLI(args);
+//    Command cmd = cli.parse();
+//
 //    Block block1 = new Block(genesis.hash);
-//    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
+//    Wallet b = WalletUtils.getInstance().getWallet(walletPubKey2);
+//
+//    System.out.println("\n지갑A 잔고: " + a.getBalance());
 //    System.out.println("\n지갑A에서 지갑B로 40 전송..");
-//    block1.addTransaction(walletA.sendFunds(walletB.publicKey, 40f));
+//    block1.addTransaction(a.sendFunds(b.publicKey, 40f));
 //    addBlock(block1);
-//    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
-//    System.out.println("지갑B 잔고: " + walletB.getBalance());
+//    System.out.println("\n지갑A 잔고: " + a.getBalance());
+//    System.out.println("지갑B 잔고: " + b.getBalance());
+
+//    switch (cmd) {
+//      case CREATE_BLOCKCHAIN:
+//        break;
+//      case GET_BALANCE:
+//        break;
+//      case SEND:
+//        break;
+//      case CREATE_WALLET:
+//        break;
+//      case PRINT_PUBLIC_KEYS:
+//        break;
+//      case PRINT_BLOCKCHAIN:
+//        break;
+//      default:
+//        break;
+//    }
+
+//    walletA = new Wallet();
+//    walletB = new Wallet();
+
+//
+
+//
+//    //testing
+
 //
 //    Block block2 = new Block(block1.hash);
 //    System.out.println("\n지갑A에서 1000 전송 시도 (잔고 부족)...");
@@ -84,10 +93,10 @@ public class BlockChain {
 //    isChainValid();
 //    String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(demoChain);
 //    System.out.println(blockchainJson);
-  }
+//  }
 
   //블록체인 무결성 검증
-  public static Boolean isChainValid() {
+  public boolean isChainValid() {
     Block currentBlock;
     Block previousBlock;
     String hashTarget = StringUtil.getDifficultyString(difficulty);
@@ -163,7 +172,7 @@ public class BlockChain {
     return true;
   }
 
-  public static void addBlock(Block newBlock) {
+  public void addBlock(Block newBlock) {
     newBlock.mining(difficulty);
     demoChain.add(newBlock);
   }

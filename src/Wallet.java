@@ -73,10 +73,11 @@ public class Wallet implements Serializable {
     for (TransactionInput input : inputs) {
       UTXOs.remove(input.transactionOutputId); //새 Output을 생성했으므로 존재하던 Input 삭제
     }
+
     return newTransaction;
   }
 
-  public String getAddress() {
+  public String getPublicKeyString() {
     return CryptoUtil.getStringFromKey(publicKey);
   }
 
