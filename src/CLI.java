@@ -53,6 +53,7 @@ public class CLI {
         case "send":
           return Command.SEND;
         case "createwallet":
+          createWallet();
           return Command.CREATE_WALLET;
         case "printpubkeys":
           printPublicKeys();
@@ -67,6 +68,12 @@ public class CLI {
       e.printStackTrace();
     }
     return Command.HELP;
+  }
+
+  private void createWallet() {
+    Wallet wallet = WalletUtils.getInstance().createWallet();
+    System.out.println(" # 지갑 생성");
+    System.out.println(wallet.publicKey);
   }
 
   private void printPublicKeys() {
