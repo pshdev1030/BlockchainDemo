@@ -9,7 +9,7 @@ public class Controller {
 
   public static void main(String[] args) {
     Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-    Controller c = new Controller();
+    Controller controller = new Controller();
 
     BlockChain blockChain = new BlockChain();
     Wallet coinbase = new Wallet();
@@ -55,7 +55,7 @@ public class Controller {
 
           break;
         case GET_BALANCE:
-          c.getBalance(cmd);
+          controller.getBalance(cmd);
           break;
         case SEND:
           String sender = cmd.getOptionValue("from");
@@ -63,21 +63,22 @@ public class Controller {
           String value = cmd.getOptionValue("amount");
 
           if (sender.isEmpty() || recipient.isEmpty() || value.isEmpty()) {
-            c.help();
+            controller.help();
           }
 
-          c.sendFunds(sender, recipient, Float.valueOf(value));
+          controller.sendFunds(sender, recipient, Float.valueOf(value));
           break;
         case CREATE_WALLET:
-          c.createWallet();
+          controller.createWallet();
           break;
         case PRINT_PUBLIC_KEYS:
-          c.printPublicKeys();
+          controller.printPublicKeys();
           break;
         case PRINT_BLOCKCHAIN:
+          controller.printBlockChain(blockChain);
           break;
         default:
-          c.help();
+          controller.help();
           break;
       }
 
@@ -86,12 +87,15 @@ public class Controller {
     }
 
     blockChain.isChainValid();
+  }
+
+  private void printBlockChain(BlockChain blockChain) {
     String blockchainJson = new GsonBuilder().setPrettyPrinting().create()
         .toJson(blockChain.demoChain);
     System.out.println(blockchainJson);
   }
 
-  private void sendFunds(String sender, String recipient, Float value) {
+  private void sendFunds(String sender, String recipient, float value) {
     PublicKey senderPublicKey = WalletUtils.getInstance().findPublicKeyByString(sender);
     PublicKey recipientPublicKey = WalletUtils.getInstance().findPublicKeyByString(recipient);
   }
