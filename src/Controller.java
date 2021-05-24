@@ -36,12 +36,13 @@ public class Controller {
 
     Block block1 = new Block(genesis.hash);
 
-    System.out.println("\n지갑A 잔고: " + a.getBalance());
-    System.out.println("\n지갑A에서 지갑B로 40 전송..");
+//    System.out.println("\n지갑A 잔고: " + a.getBalance());
+//    System.out.println("\n지갑A에서 지갑B로 40 전송..");
     block1.addTransaction(a.sendFunds(b.publicKey, 40f));
     blockChain.addBlock(block1);
-    System.out.println("\n지갑A 잔고: " + a.getBalance());
-    System.out.println("지갑B 잔고: " + b.getBalance());
+//    System.out.println("\n지갑A 잔고: " + a.getBalance());
+//    System.out.println("지갑B 잔고: " + b.getBalance());
+
 
     CLI cli = new CLI(args);
     Command command = cli.parse();
@@ -86,7 +87,7 @@ public class Controller {
       e.printStackTrace();
     }
 
-    blockChain.isChainValid();
+//    blockChain.isChainValid();
   }
 
   private void printBlockChain(BlockChain blockChain) {

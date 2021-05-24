@@ -13,94 +13,12 @@ public class BlockChain {
   public static float minimumTransaction = 0.1f;
   public Transaction genesisTransaction;
 
-//  public static void main(String[] args) {
-//    Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-//
-//    String walletPubKey1 = "6b:15:1e:e5:61:62:df:35:80:be:85:ea:ab:78:0b:78:db:77:d6:03";
-//    String walletPubKey2 = "93:e8:b0:5c:20:e7:5c:42:d6:f8:3f:59:8d:99:5a:e6:81:47:23:46";
-//
-//    Wallet coinbase = new Wallet();
-//
-//    //최초 트랜잭션 생성, 지갑A에 100코인 지급 코드
-//    Wallet a = WalletUtils.getInstance().getWallet(walletPubKey1);
-
-//    genesisTransaction = new Transaction(coinbase.publicKey, a.publicKey, 100f, null);
-//    genesisTransaction.generateSignature(coinbase.privateKey);   // 최초 트랜잭션은 수동으로 서명
-//    genesisTransaction.transactionId = "0"; // 최초 트랜잭션은 수동으로 ID를 설정
-//    genesisTransaction.outputs.add(
-//        new TransactionOutput(genesisTransaction.recipient, genesisTransaction.value,
-//            genesisTransaction.transactionId)); // 수동으로 OUTPUT에 추가
-//    UTXOs.put(genesisTransaction.outputs.get(0).id,
-//        genesisTransaction.outputs.get(0)); //블록체인의 장부에 저장
-//
-//    System.out.println("제네시스 블록 생성 중... ");
-//    Block genesis = new Block("0");
-//    genesis.addTransaction(genesisTransaction);
-//    addBlock(genesis);
-//
-//    CLI cli = new CLI(args);
-//    Command cmd = cli.parse();
-//
-//    Block block1 = new Block(genesis.hash);
-//    Wallet b = WalletUtils.getInstance().getWallet(walletPubKey2);
-//
-//    System.out.println("\n지갑A 잔고: " + a.getBalance());
-//    System.out.println("\n지갑A에서 지갑B로 40 전송..");
-//    block1.addTransaction(a.sendFunds(b.publicKey, 40f));
-//    addBlock(block1);
-//    System.out.println("\n지갑A 잔고: " + a.getBalance());
-//    System.out.println("지갑B 잔고: " + b.getBalance());
-
-//    switch (cmd) {
-//      case CREATE_BLOCKCHAIN:
-//        break;
-//      case GET_BALANCE:
-//        break;
-//      case SEND:
-//        break;
-//      case CREATE_WALLET:
-//        break;
-//      case PRINT_PUBLIC_KEYS:
-//        break;
-//      case PRINT_BLOCKCHAIN:
-//        break;
-//      default:
-//        break;
-//    }
-
-//    walletA = new Wallet();
-//    walletB = new Wallet();
-
-//
-
-//
-//    //testing
-
-//
-//    Block block2 = new Block(block1.hash);
-//    System.out.println("\n지갑A에서 1000 전송 시도 (잔고 부족)...");
-//    block2.addTransaction(walletA.sendFunds(walletB.publicKey, 1000f));
-//    addBlock(block2);
-//    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
-//    System.out.println("지갑B 잔고: " + walletB.getBalance());
-//
-//    Block block3 = new Block(block2.hash);
-//    System.out.println("\n지갑B에서 지갑A로 20 전송...");
-//    block3.addTransaction(walletB.sendFunds(walletA.publicKey, 20));
-//    System.out.println("\n지갑A 잔고: " + walletA.getBalance());
-//    System.out.println("지갑B 잔고: " + walletB.getBalance());
-//
-//    isChainValid();
-//    String blockchainJson = new GsonBuilder().setPrettyPrinting().create().toJson(demoChain);
-//    System.out.println(blockchainJson);
-//  }
-
   //블록체인 무결성 검증
   public boolean isChainValid() {
     Block currentBlock;
     Block previousBlock;
     String hashTarget = StringUtil.getDifficultyString(difficulty);
-    HashMap<String, TransactionOutput> tempUTXOs = new HashMap<String, TransactionOutput>(); //a temporary working list of unspent transactions at a given block state.
+    HashMap<String, TransactionOutput> tempUTXOs = new HashMap<>(); //a temporary working list of unspent transactions at a given block state.
     tempUTXOs.put(genesisTransaction.outputs.get(0).id, genesisTransaction.outputs.get(0));
 
     for (int i = 1; i < demoChain.size(); i++) {
@@ -140,12 +58,12 @@ public class BlockChain {
           tempOutput = tempUTXOs.get(input.transactionOutputId);
 
           if (tempOutput == null) {
-            System.out.println("#Referenced input on Transaction(" + t + ") is Missing");
+            System.out.println("# TransactionInput (" + t + ")이 없습니다.");
             return false;
           }
 
           if (input.UTXO.value != tempOutput.value) {
-            System.out.println("#Referenced input Transaction(" + t + ") value is Invalid");
+            System.out.println("# TransactionInput (" + t + ")이 유효하지 않습니다.");
             return false;
           }
 
@@ -162,7 +80,7 @@ public class BlockChain {
           return false;
         }
         if (currentTransaction.outputs.get(1).recipient != currentTransaction.sender) {
-          System.out.println("#트랜잭션(" + t + ") output 'change' is not sender.");
+          System.out.println("#트랜잭션(" + t + ") Output의 송신자가 변조되어습니다.");
           return false;
         }
 
