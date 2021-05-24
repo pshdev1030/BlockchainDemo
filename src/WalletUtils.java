@@ -16,11 +16,23 @@ public class WalletUtils {
 
   private volatile static WalletUtils instance;
   private final static String WALLET_FILE = "wallet.dat";
-  private final static String ALGORITHM = "AES";
-  private static final byte[] CIPHER_TEXT = "2oF@5sC%DNf32y!TmiZi!tG9W5rLaniD".getBytes();
 
   private WalletUtils() {
     initWalletFile();
+  }
+
+  public PublicKey findPublicKeyByString(String targetPublicKeyString) {
+    for (PublicKey publicKey : getPublicKeys()) {
+      String publicKeyString = publicKey.toString();
+      int start = publicKeyString.indexOf("[") + 1;
+      int end = publicKeyString.indexOf("]");
+
+      if (targetPublicKeyString.equals(publicKeyString.substring(start, end))) {
+        return publicKey;
+      }
+    }
+
+    return null;
   }
 
   public synchronized static WalletUtils getInstance() {
@@ -42,6 +54,11 @@ public class WalletUtils {
   public Set<PublicKey> getPublicKeys() {
     Wallets wallets = loadFromDisk();
     return wallets.getPublicKeys();
+  }
+
+  public Wallet getWallet(String publicKeyString) {
+    PublicKey publicKey = findPublicKeyByString(publicKeyString);
+    return getWallet(publicKey);
   }
 
   public Wallet getWallet(PublicKey publicKey) {
