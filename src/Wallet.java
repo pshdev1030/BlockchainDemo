@@ -13,10 +13,12 @@ public class Wallet implements Serializable {
 
   public PrivateKey privateKey; //트랜잭션에 사인을 하는 기능
   public PublicKey publicKey; // 입금을 받는 주소
-  public HashMap<String, TransactionOutput> UTXOs = new HashMap<String, TransactionOutput>(); //이 지갑에 저장되는 잔고 = 블록체인상에 자신의 소유로 저장되어 있는 UTXO 출력값들
+  public String nickname;
+  public HashMap<String, TransactionOutput> UTXOs = new HashMap<>(); //이 지갑에 저장되는 잔고 = 블록체인상에 자신의 소유로 저장되어 있는 UTXO 출력값들
 
-  public Wallet() {
+  public Wallet(String nickname) {
     generateKeyPair();
+    this.nickname = nickname;
   }
 
   // Elliptic Curve KeyPair 방식을 사용하여 두 키를 생성

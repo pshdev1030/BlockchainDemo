@@ -10,18 +10,19 @@ public class CLI {
     this.args = args;
 
     Option helpCmd = Option.builder("help").desc("Show help").build();
-    options.addOption(helpCmd);
-
     Option publicKey = Option.builder("pubkey").hasArg(true).desc("Source wallet public key")
         .build();
     Option sendFrom = Option.builder("from").hasArg(true).desc("Source wallet public key").build();
     Option sendTo = Option.builder("to").hasArg(true).desc("Destination wallet public key").build();
     Option sendAmount = Option.builder("amount").hasArg(true).desc("Amount to send").build();
+    Option nickname = Option.builder("nickname").hasArg().desc("Nickname of wallet").build();
 
+    options.addOption(helpCmd);
     options.addOption(publicKey);
     options.addOption(sendFrom);
     options.addOption(sendTo);
     options.addOption(sendAmount);
+    options.addOption(nickname);
   }
 
   public Command parse() {
@@ -38,8 +39,8 @@ public class CLI {
           return Command.SEND;
         case "createwallet":
           return Command.CREATE_WALLET;
-        case "printpubkeys":
-          return Command.PRINT_PUBLIC_KEYS;
+        case "printwallets":
+          return Command.PRINT_WALLET;
         case "printchain":
           return Command.PRINT_BLOCKCHAIN;
         default:

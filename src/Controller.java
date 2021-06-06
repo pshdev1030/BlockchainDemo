@@ -12,13 +12,13 @@ public class Controller {
     Controller controller = new Controller();
 
     BlockChain blockChain = new BlockChain();
-    Wallet coinbase = new Wallet();
+    Wallet coinbase = new Wallet("Coinbase");
 
     // Example: Wallet 1(100.0f) -> Wallet 2(0.0f) [40.0f]
-    String walletPubKey1 = "6b:15:1e:e5:61:62:df:35:80:be:85:ea:ab:78:0b:78:db:77:d6:03";
-    String walletPubKey2 = "93:e8:b0:5c:20:e7:5c:42:d6:f8:3f:59:8d:99:5a:e6:81:47:23:46";
-    Wallet a = WalletUtils.getInstance().getWallet(walletPubKey1);
-    Wallet b = WalletUtils.getInstance().getWallet(walletPubKey2);
+    String walletNickname1 = "yoonseop";
+    String walletNickname2 = "youngkyeong";
+    Wallet a = WalletUtils.getInstance().getWallet(walletNickname1);
+    Wallet b = WalletUtils.getInstance().getWallet(walletNickname2);
 
     blockChain.genesisTransaction = new Transaction(coinbase.publicKey, a.publicKey, 100f, null);
     blockChain.genesisTransaction.generateSignature(coinbase.privateKey);   // 최초 트랜잭션은 수동으로 서명
@@ -36,13 +36,12 @@ public class Controller {
 
     Block block1 = new Block(genesis.hash);
 
-//    System.out.println("\n지갑A 잔고: " + a.getBalance());
-//    System.out.println("\n지갑A에서 지갑B로 40 전송..");
+    System.out.println("\n지갑A 잔고: " + a.getBalance());
+    System.out.println("\n지갑A에서 지갑B로 40 전송..");
     block1.addTransaction(a.sendFunds(b.publicKey, 40f));
     blockChain.addBlock(block1);
-//    System.out.println("\n지갑A 잔고: " + a.getBalance());
-//    System.out.println("지갑B 잔고: " + b.getBalance());
-
+    System.out.println("\n지갑A 잔고: " + a.getBalance());
+    System.out.println("지갑B 잔고: " + b.getBalance());
 
     CLI cli = new CLI(args);
     Command command = cli.parse();
@@ -70,10 +69,11 @@ public class Controller {
           controller.sendFunds(sender, recipient, Float.valueOf(value));
           break;
         case CREATE_WALLET:
-          controller.createWallet();
+          String nickname = cmd.getOptionValue("nickname");
+          controller.createWallet(nickname);
           break;
-        case PRINT_PUBLIC_KEYS:
-          controller.printPublicKeys();
+        case PRINT_WALLET:
+          controller.printWallets();
           break;
         case PRINT_BLOCKCHAIN:
           controller.printBlockChain(blockChain);
@@ -97,32 +97,33 @@ public class Controller {
   }
 
   private void sendFunds(String sender, String recipient, float value) {
-    PublicKey senderPublicKey = WalletUtils.getInstance().findPublicKeyByString(sender);
-    PublicKey recipientPublicKey = WalletUtils.getInstance().findPublicKeyByString(recipient);
+    Wallet senderWallet = WalletUtils.getInstance().getWallet(sender);
+    Wallet recipientWallet = WalletUtils.getInstance().getWallet(recipient);
+    senderWallet.sendFunds(recipientWallet.publicKey, value);
   }
 
-  private void createWallet() {
-    Wallet wallet = WalletUtils.getInstance().createWallet();
-    System.out.println(" # 지갑 생성");
-    System.out.println(wallet.publicKey);
+  private void createWallet(String nickname) {
+    Wallet wallet = WalletUtils.getInstance().createWallet(nickname);
+    System.out.println(" # Wallet created");
+    System.out.println(wallet.nickname);
   }
 
-  private void printPublicKeys() {
-    System.out.println(" # Wallet Public Keys");
-    for (PublicKey publicKey : WalletUtils.getInstance().getPublicKeys()) {
-      System.out.println(publicKey);
+  private void printWallets() {
+    System.out.println(" # Wallet nicknames");
+    for (String nickname : WalletUtils.getInstance().getNicknames()) {
+      System.out.println(nickname);
     }
   }
 
   private void getBalance(CommandLine cmd) {
-    String getBalancePublicKey = cmd.getOptionValue("pubkey");
+    String nickname = cmd.getOptionValue("nickname");
 
-    if (getBalancePublicKey.isEmpty()) {
+    if (nickname.isEmpty()) {
       help();
     }
 
     PublicKey selectedPublicKey = WalletUtils.getInstance()
-        .findPublicKeyByString(getBalancePublicKey);
+        .findPublicKeyByNickname(nickname);
 
     if (selectedPublicKey == null) {
       System.out.println("Invalid public key.");
@@ -130,15 +131,15 @@ public class Controller {
 
     Wallet wallet = WalletUtils.getInstance().getWallet(selectedPublicKey);
     float balance = wallet.getBalance();
-    System.out.println(" # 잔고: " + balance);
+    System.out.println(" # [" + nickname + "] balance: " + balance);
   }
 
   private void help() {
     System.out.println("Usage:");
     System.out
         .println("  createwallet : Generates a new key-pair and saves it into the wallet file");
-    System.out.println("  printpubkeys : Print all wallet public keys");
-    System.out.println("  getbalance -pubkey 'pubkey' : Get balance of public key");
+    System.out.println("  printwallets : Print all wallet nicknames");
+    System.out.println("  getbalance -nickname 'nickname' : Get balance of nickname");
     System.out.println(
         "  createblockchain -address ADDRESS : Create a blockchain and send genesis block reward to ADDRESS");
     System.out.println("  printchain : Print all the blocks of the blockchain");

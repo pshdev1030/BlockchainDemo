@@ -8,8 +8,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.PublicKey;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 public class WalletUtils {
@@ -35,6 +37,11 @@ public class WalletUtils {
     return null;
   }
 
+  public PublicKey findPublicKeyByNickname(String targetNickname) {
+    Wallet wallet = getWallet(targetNickname);
+    return wallet.publicKey;
+  }
+
   public synchronized static WalletUtils getInstance() {
     if (instance == null) {
       instance = new WalletUtils();
@@ -56,9 +63,14 @@ public class WalletUtils {
     return wallets.getPublicKeys();
   }
 
-  public Wallet getWallet(String publicKeyString) {
-    PublicKey publicKey = findPublicKeyByString(publicKeyString);
-    return getWallet(publicKey);
+  public Set<String> getNicknames() {
+    Wallets wallets = loadFromDisk();
+    return wallets.getNicknames();
+  }
+
+  public Wallet getWallet(String nickname) {
+    Wallets wallets = loadFromDisk();
+    return wallets.getWallet(nickname);
   }
 
   public Wallet getWallet(PublicKey publicKey) {
@@ -66,8 +78,8 @@ public class WalletUtils {
     return wallets.getWallet(publicKey);
   }
 
-  public Wallet createWallet() {
-    Wallet wallet = new Wallet();
+  public Wallet createWallet(String nickname) {
+    Wallet wallet = new Wallet(nickname);
     Wallets wallets = loadFromDisk();
     wallets.addWallet(wallet);
     saveToDisk(wallets);
@@ -122,12 +134,30 @@ public class WalletUtils {
       return walletMap.keySet();
     }
 
+    Set<String> getNicknames() {
+      if (walletMap == null) {
+        throw new RuntimeException("Fail to get addresses.");
+      }
+      return walletMap.values().stream().map(p -> p.nickname)
+          .collect(Collectors.toSet());
+    }
+
     Wallet getWallet(PublicKey publicKey) {
       Wallet wallet = walletMap.get(publicKey);
       if (wallet == null) {
         throw new RuntimeException("Fail to get wallet.");
       }
       return wallet;
+    }
+
+    Wallet getWallet(String nickname) {
+      try {
+        return walletMap.values().stream().filter(p -> p.nickname.equals(nickname))
+            .collect(Collectors.toList()).get(0);
+      } catch (IndexOutOfBoundsException e) {
+        System.out.println("[" + nickname + "] is not exists.");
+        return null;
+      }
     }
   }
 

@@ -3,7 +3,7 @@ public enum Command {
   GET_BALANCE,
   SEND,
   CREATE_WALLET,
-  PRINT_PUBLIC_KEYS,
+  PRINT_WALLET,
   PRINT_BLOCKCHAIN,
   HELP
 }
